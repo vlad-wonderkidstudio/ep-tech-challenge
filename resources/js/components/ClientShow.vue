@@ -37,40 +37,12 @@
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
-                    <h3 class="mb-3">List of client bookings</h3>
-
-                    <template v-if="client.bookings && client.bookings.length > 0">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Notes</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
-                                    <td>{{ booking.notes }}</td>
-                                    <td>
-                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </template>
-
-                    <template v-else>
-                        <p class="text-center">The client has no bookings.</p>
-                    </template>
-
+                    <bookings :bookings="client.bookings_sorted" />
                 </div>
 
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
-                    <h3 class="mb-3">List of client journals</h3>
-
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <journals :journals="client.journals_sorted" :client="client.id"/>
                 </div>
             </div>
         </div>
@@ -78,27 +50,25 @@
 </template>
 
 <script>
-import axios from 'axios';
+import Bookings from './subcomponents/Bookings.vue';
+import Journals from './subcomponents/Journals.vue';
 
 export default {
     name: 'ClientShow',
-
     props: ['client'],
-
+    components: {
+        Bookings,
+        Journals
+    },
     data() {
         return {
             currentTab: 'bookings',
         }
     },
-
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;
         },
-
-        deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
-        }
     }
 }
 </script>

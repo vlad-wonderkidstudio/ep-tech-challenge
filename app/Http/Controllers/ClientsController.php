@@ -2,52 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Client;
-use Illuminate\Http\Request;
+use App\Services\ClientsService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Contracts\View\Factory;
 
 class ClientsController extends Controller
 {
-    public function index()
+    protected $clientService;
+
+    public function __construct(ClientsService $clientService)
     {
-        $clients = Client::all();
+        $this->clientService = $clientService;
+    }
 
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
-
+    public function index(): View | Factory
+    {
+        $clients = $this->clientService->getAllUserClients();
         return view('clients.index', ['clients' => $clients]);
     }
 
-    public function create()
+    public function create(): View | Factory
     {
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show($client): View | Factory
     {
-        $client = Client::where('id', $client)->first();
-
+        $client = $this->clientService->getClientWithBookingsById($client);
+        if (!$client) {
+            abort(404, 'Client not found');
+        }
         return view('clients.show', ['client' => $client]);
-    }
-
-    public function store(Request $request)
-    {
-        $client = new Client;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
-
-        return $client;
-    }
-
-    public function destroy($client)
-    {
-        Client::where('id', $client)->delete();
-
-        return 'Deleted';
     }
 }

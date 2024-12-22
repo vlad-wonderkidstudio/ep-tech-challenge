@@ -6,6 +6,11 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="api-base-url" content="{{ url('/api') }}">
+    <meta name="web-clients-index-url" content="{{ route('clients.index') }}">
+    <meta name="web-clients-create-url" content="{{ route('clients.create') }}">
+    <meta name="web-clients-show-url" content="{{ route('clients.show', ['client' => '/']) }}">
+
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 

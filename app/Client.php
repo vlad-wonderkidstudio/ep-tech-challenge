@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Collection;
 
 class Client extends Model
 {
@@ -10,7 +12,7 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
     ];
@@ -19,18 +21,37 @@ class Client extends Model
         'url',
     ];
 
-    public function bookings()
+    public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
     }
 
-    public function getBookingsCountAttribute()
+    public function journals(): HasMany
+    {
+        return $this->hasMany(Journal::class);
+    }
+
+    public function getBookingsCountAttribute(): int
     {
         return $this->bookings->count();
     }
 
-    public function getUrlAttribute()
+    public function getBookingsSortedAttribute(): Collection
     {
-        return "/clients/" . $this->id;
+        return $this->bookings()
+            ->orderBy('end', 'desc')
+            ->get();
+    }
+
+    public function getJournalsSortedAttribute(): Collection
+    {
+        return $this->journals()
+            ->orderBy('date', 'desc')
+            ->get();
+    }
+
+    public function getUrlAttribute(): string
+    {
+        return route('clients.show', ['client' => $this->id]);
     }
 }

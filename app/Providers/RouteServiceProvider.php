@@ -72,8 +72,11 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
+        //Since in our testing task we call our API routes from the web routes only,
+        //we need to add the web middleware to the API routes
+        //In a more complex scenarios I would use Sanctum or Passport for API authentication
         Route::prefix('api')
-            ->middleware('api')
+            ->middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('routes/api.php'));
     }
